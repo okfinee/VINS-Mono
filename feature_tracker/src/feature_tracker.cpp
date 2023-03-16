@@ -2,14 +2,17 @@
 
 int FeatureTracker::n_id = 0;
 
+//判断跟踪的特征点是否在图像边界内
 bool inBorder(const cv::Point2f &pt)
 {
     const int BORDER_SIZE = 1;
+    //cvRound()：四舍五入取整
     int img_x = cvRound(pt.x);
     int img_y = cvRound(pt.y);
     return BORDER_SIZE <= img_x && img_x < COL - BORDER_SIZE && BORDER_SIZE <= img_y && img_y < ROW - BORDER_SIZE;
 }
 
+//去除无法跟踪的特征点
 void reduceVector(vector<cv::Point2f> &v, vector<uchar> status)
 {
     int j = 0;
@@ -33,6 +36,7 @@ FeatureTracker::FeatureTracker()
 {
 }
 
+//对跟踪点进行排序并去除密集点
 void FeatureTracker::setMask()
 {
     if(FISHEYE)
@@ -68,6 +72,7 @@ void FeatureTracker::setMask()
     }
 }
 
+//添加新检测到的特征点n_pts，ID初始化-1，跟踪次数1
 void FeatureTracker::addPoints()
 {
     for (auto &p : n_pts)
@@ -78,6 +83,7 @@ void FeatureTracker::addPoints()
     }
 }
 
+//对图像使用光流法进行特征点跟踪
 void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
 {
     cv::Mat img;
